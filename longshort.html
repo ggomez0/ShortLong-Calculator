@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LongShort Investment Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        P{
+            text-align: center;
+        }
+        input {
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 150px;
+        }
+        button:hover {
+            opacity: 80%;
+        }
+        .btnselected {
+            background-color: #333; 
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+        }
+        .button-group-ls, .button-group-mult {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .button-group-ls, .button-group-mult button {
+            margin: 5px;
+            flex: 1 1 45%;
+        }
+
+        #longButton {
+            background-color: green;
+        }
+        #shortButton {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>LongShort Calculator</h1>
+    <p>How much money could I have if I invest $?</p>
+    <div class="button-group-ls">
+        <button id="longButton" onclick="setPosition('long', this)">Long</button>
+        <button id="shortButton" onclick="setPosition('short', this)">Short</button>
+    </div>
+    
+    <div class="button-group-mult">
+        <button onclick="setMultiplier(125, this)">x125</button>
+        <button onclick="setMultiplier(20, this)">x20</button>
+        <button onclick="setMultiplier(10, this)">x10</button>
+        <button onclick="setMultiplier(3, this)">x3</button>
+    </div class='inputsvalues'>
+    <label for="initialPrice">Initial Price:</label>
+    <input type="number" id="initialPrice" placeholder="Enter initial price" required>
+    <label for="targetPrice">Price Objective:</label>
+    <input type="number" id="targetPrice" placeholder="Enter target price" required>
+    
+    <label for="investment">Money Invested:</label>
+    <input type="number" id="investment" placeholder="Enter amount invested" required>
+    
+    <button onclick="calculate()">Calculate</button>
+    
+    <div class="result" id="result"></div>
+
+    <script>
+        let position = 'long';
+        let multiplier = 1;
+
+        function setPosition(pos, button) {
+            position = pos;
+            const longshortbtns = document.querySelectorAll('.button-group-ls button');
+            longshortbtns.forEach(btn => btn.classList.remove('btnselected'));
+            button.classList.add('btnselected');
+
+            button.classList.add('btnselected');
+        }
+
+        function setMultiplier(mult, button) {
+            multiplier = mult;
+            const multiplierButtons = document.querySelectorAll('.button-group-mult button');
+            multiplierButtons.forEach(btn => btn.classList.remove('btnselected'));
+            button.classList.add('btnselected');
+        }
+
+        function calculate() {
+            const initialPrice = parseFloat(document.getElementById('initialPrice').value);
+            const targetPrice = parseFloat(document.getElementById('targetPrice').value);
+            const investment = parseFloat(document.getElementById('investment').value);
+            
+            if (isNaN(initialPrice) || isNaN(targetPrice) || isNaN(investment)) {
+                document.getElementById('result').innerText = "Please enter valid numbers.";
+                return;
+            }
+
+            let pnl;
+            let percentageChange;
+
+            if (position === 'short') {
+                pnl = (initialPrice - targetPrice) * (investment / initialPrice) * multiplier;
+                percentageChange = ((initialPrice - targetPrice) / targetPrice) * 100;
+
+                
+            } else {
+                pnl = (targetPrice - initialPrice) * (investment / initialPrice) * multiplier;
+                percentageChange = ((targetPrice - initialPrice) / initialPrice) * 100;
+
+            }
+
+            document.getElementById('result').innerHTML = `
+                <h2>Results:</h2>
+                <p>Position: ${position.charAt(0).toUpperCase() + position.slice(1)}</p>
+                <p>Multiplier: x${multiplier}</p>
+                <p>Percentage Change: ${percentageChange.toFixed(2)}%</p>
+                <p>PNL Value: $${pnl.toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
